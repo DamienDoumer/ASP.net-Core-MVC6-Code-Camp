@@ -6,48 +6,60 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MyCodeCamp.Data;
+using Newtonsoft.Json;
 
 namespace MyCodeCamp
 {
-    public class Startup
+  public class Startup
+  {
+    public Startup(IHostingEnvironment env)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+      var builder = new ConfigurationBuilder()
+          .SetBasePath(env.ContentRootPath)
+          .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+          .AddEnvironmentVariables();
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc();
-            //++Add the registered object within a given scope usually 
-            //++Within the scope of a single request.
-            services.AddScoped<ICampRepository>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            //app.UseStaticFiles();
-
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller=Home}/{action=Index}/{id?}");
-            //});
-        }
+      _config = builder.Build();
     }
+
+    IConfigurationRoot _config;
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+
+      services.AddSingleton(_config);
+      services.AddDbContext<CampContext>(ServiceLifetime.Scoped);
+      services.AddScoped<ICampRepository, CampRepository>();
+      services.AddTransient<CampDbInitializer>();
+
+      // Add framework services.
+      services.AddMvc()
+        .AddJsonOptions(opt =>
+        {
+          opt.SerializerSettings.ReferenceLoopHandling =
+            ReferenceLoopHandling.Ignore;
+        });
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, 
+      IHostingEnvironment env, 
+      ILoggerFactory loggerFactory,
+      CampDbInitializer seeder)
+    {
+      loggerFactory.AddConsole(_config.GetSection("Logging"));
+      loggerFactory.AddDebug();
+
+      app.UseMvc(config =>
+      {
+        //config.MapRoute("MainAPIRoute", "api/{controller}/{action}");
+      });
+
+      seeder.Seed().Wait();
+    }
+  }
 }

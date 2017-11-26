@@ -3,14 +3,14 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:55610/",
+      "applicationUrl": "http://localhost:8088/",
       "sslPort": 0
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
+      "launchUrl": "api/values",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -18,10 +18,10 @@
     "MyCodeCamp": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "http://localhost:5000/api/values",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:55612/"
+      }
     }
   }
 }
