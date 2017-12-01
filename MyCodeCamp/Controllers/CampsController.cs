@@ -54,10 +54,10 @@ namespace MyCodeCamp.Controllers
             try
             {
                 _repo.Add(model);
-                if(await _repo.SaveAllAsync())
+                if (await _repo.SaveAllAsync())
                 {
                     var newUri = Url.Link("CampGet", new { id = model.Id });
-                    return Created(newUri, model); 
+                    return Created(newUri, model);
                 }
             }
             catch (Exception)
@@ -66,6 +66,15 @@ namespace MyCodeCamp.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] Camp model)
+        {
+            try
+            {
+                var odCamp = _repo.GetCamp(id);
+            }
         }
     }
 }
