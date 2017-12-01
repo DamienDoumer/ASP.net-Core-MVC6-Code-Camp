@@ -42,20 +42,5 @@ namespace MyCodeCamp.Controllers
 
             return BadRequest("Could not reload the configurations.");
         }
-
-        [HttpPost]
-        public IActionResult Post([FromBody]Camp model)
-        {
-            try
-            {
-
-            }
-            catch (Exception)
-            {
-
-            }
-
-            return BadRequest();
-        }
     }
 }
