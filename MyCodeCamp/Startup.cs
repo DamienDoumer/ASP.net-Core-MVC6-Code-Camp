@@ -30,7 +30,8 @@ namespace MyCodeCamp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.Add(ServiceDescriptor.Singleton<ILoggerFactory, LoggerFactory>());
+            services.Add(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
             services.AddSingleton(_config);
             services.AddDbContext<CampContext>(ServiceLifetime.Scoped);
             services.AddScoped<ICampRepository, CampRepository>();
