@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MyCodeCamp.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +26,6 @@ namespace MyCodeCamp.Controllers
             _config = config;
         }
 
-        [HttpGet("")]
-        public IActionResult Re()
-        {
-            return Ok("Hi");
-        }
-
         [HttpGet("reloadConfig")]
         public IActionResult ReloadConfiguration()
         {
@@ -46,6 +41,21 @@ namespace MyCodeCamp.Controllers
             }
 
             return BadRequest("Could not reload the configurations.");
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody]Camp model)
+        {
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return BadRequest();
         }
     }
 }
