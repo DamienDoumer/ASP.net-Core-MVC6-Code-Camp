@@ -12,55 +12,54 @@ using Newtonsoft.Json;
 
 namespace MyCodeCamp
 {
-    public class Startup
+  public class Startup
+  {
+    public Startup(IHostingEnvironment env)
     {
-        public Startup(IHostingEnvironment env)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+      var builder = new ConfigurationBuilder()
+          .SetBasePath(env.ContentRootPath)
+          .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+          .AddEnvironmentVariables();
 
-            _config = builder.Build();
-        }
-
-        IConfigurationRoot _config;
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.Add(ServiceDescriptor.Singleton<ILoggerFactory, LoggerFactory>());
-            services.Add(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
-            services.AddSingleton(_config);
-            services.AddDbContext<CampContext>(ServiceLifetime.Scoped);
-            services.AddScoped<ICampRepository, CampRepository>();
-            services.AddTransient<CampDbInitializer>();
-
-            // Add framework services.
-            services.AddMvc()
-              .AddJsonOptions(opt =>
-              {
-                  opt.SerializerSettings.ReferenceLoopHandling =
-              ReferenceLoopHandling.Ignore;
-              });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app,
-          IHostingEnvironment env,
-          ILoggerFactory loggerFactory,
-          CampDbInitializer seeder)
-        {
-            loggerFactory.AddConsole(_config.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            app.UseMvc(config =>
-            {
-                //config.MapRoute("MainAPIRoute", "api/{controller}/{action}");
-            });
-
-            seeder.Seed().Wait();
-        }
+      _config = builder.Build();
     }
+
+    IConfigurationRoot _config;
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+
+      services.AddSingleton(_config);
+      services.AddDbContext<CampContext>(ServiceLifetime.Scoped);
+      services.AddScoped<ICampRepository, CampRepository>();
+      services.AddTransient<CampDbInitializer>();
+
+      // Add framework services.
+      services.AddMvc()
+        .AddJsonOptions(opt =>
+        {
+          opt.SerializerSettings.ReferenceLoopHandling =
+            ReferenceLoopHandling.Ignore;
+        });
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, 
+      IHostingEnvironment env, 
+      ILoggerFactory loggerFactory,
+      CampDbInitializer seeder)
+    {
+      loggerFactory.AddConsole(_config.GetSection("Logging"));
+      loggerFactory.AddDebug();
+
+      app.UseMvc(config =>
+      {
+        //config.MapRoute("MainAPIRoute", "api/{controller}/{action}");
+      });
+
+      seeder.Seed().Wait();
+    }
+  }
 }

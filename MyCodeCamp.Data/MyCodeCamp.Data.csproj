@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.0.2" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
